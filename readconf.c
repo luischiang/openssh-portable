@@ -143,7 +143,7 @@ typedef enum {
 	oPubkeyAuthentication,
 	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
-	oHostKeyAlgorithms, oBindAddress, oPKCS11Provider,
+	oHostKeyAlgorithms, oBindAddress, oPKCS11Provider, oPKCS11ProviderPin,
 	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
 	oEnableSSHKeysign, oRekeyLimit, oVerifyHostKeyDNS, oConnectTimeout,
 	oAddressFamily, oGssAuthentication, oGssDelegateCreds,
@@ -236,9 +236,11 @@ static struct {
 #ifdef ENABLE_PKCS11
 	{ "smartcarddevice", oPKCS11Provider },
 	{ "pkcs11provider", oPKCS11Provider },
+	{ "pkcs11providerpin", oPKCS11ProviderPin },
 #else
 	{ "smartcarddevice", oUnsupported },
 	{ "pkcs11provider", oUnsupported },
+	{ "pkcs11providerpin", oUnsupported },
 #endif
 	{ "clearallforwardings", oClearAllForwardings },
 	{ "enablesshkeysign", oEnableSSHKeysign },
@@ -1036,6 +1038,10 @@ parse_char_array:
 		charptr = &options->pkcs11_provider;
 		goto parse_string;
 
+	case oPKCS11ProviderPin:
+		charptr = &options->pkcs11_provider_pin;
+		goto parse_string;
+
 	case oProxyCommand:
 		charptr = &options->proxy_command;
 parse_command:
@@ -1641,6 +1647,7 @@ initialize_options(Options * options)
 	options->preferred_authentications = NULL;
 	options->bind_address = NULL;
 	options->pkcs11_provider = NULL;
+	options->pkcs11_provider_pin = NULL;
 	options->enable_ssh_keysign = - 1;
 	options->no_host_authentication_for_localhost = - 1;
 	options->identities_only = - 1;
@@ -2307,6 +2314,7 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oLogLevel, log_level_name(o->log_level));
 	dump_cfg_string(oMacs, o->macs ? o->macs : KEX_CLIENT_MAC);
 	dump_cfg_string(oPKCS11Provider, o->pkcs11_provider);
+	dump_cfg_string(oPKCS11ProviderPin, o->pkcs11_provider_pin);
 	dump_cfg_string(oPreferredAuthentications, o->preferred_authentications);
 	dump_cfg_string(oProxyCommand, o->proxy_command);
 	dump_cfg_string(oRevokedHostKeys, o->revoked_host_keys);

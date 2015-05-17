@@ -595,7 +595,7 @@ main(int ac, char **av)
 
  again:
 	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
-	    "ACD:E:F:GI:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
+	    "ACD:E:F:GH:I:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
 		switch (opt) {
 		case '1':
 			options.protocol = SSH_PROTO_1;
@@ -716,6 +716,13 @@ main(int ac, char **av)
 			options.pkcs11_provider = xstrdup(optarg);
 #else
 			fprintf(stderr, "no support for PKCS#11.\n");
+#endif
+			break;
+		case 'H': 
+#ifdef ENABLE_PKCS11
+			options.pkcs11_provider_pin = xstrdup(optarg);
+#else
+			fprintf(stderr, "no support for PKCS#11 PIN.\n");
 #endif
 			break;
 		case 't':
@@ -1962,7 +1969,7 @@ load_public_identity_files(void)
 	if (options.pkcs11_provider != NULL &&
 	    options.num_identity_files < SSH_MAX_IDENTITY_FILES &&
 	    (pkcs11_init(!options.batch_mode) == 0) &&
-	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, NULL,
+	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, options.pkcs11_provider_pin,
 	    &keys)) > 0) {
 		for (i = 0; i < nkeys; i++) {
 			if (n_ids >= SSH_MAX_IDENTITY_FILES) {

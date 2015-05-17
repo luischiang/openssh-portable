@@ -88,6 +88,7 @@ typedef struct {
 	char   *preferred_authentications;
 	char   *bind_address;	/* local socket address for connection to sshd */
 	char   *pkcs11_provider; /* PKCS#11 provider */
+	char   *pkcs11_provider_pin; /* PKCS#11 provider */
 	int	verify_host_key_dns;	/* Verify host key using DNS */
 
 	int     num_identity_files;	/* Number of files for RSA/DSA identities. */
